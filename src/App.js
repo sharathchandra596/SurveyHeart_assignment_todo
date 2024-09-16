@@ -1,16 +1,16 @@
-// src/App.js
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Container, Typography, Box } from '@mui/material';
 import TodoList from './components/TodoList';
 import TodoForm from './components/TodoForm';
-import { fetchTodos } from './redux/todoSlice';
+import { fetchTodos, loadTodosFromLocalStorage } from './redux/todoSlice';
 
 function App() {
   const dispatch = useDispatch();
   const status = useSelector((state) => state.todos.status);
 
   useEffect(() => {
+    dispatch(loadTodosFromLocalStorage());  // Load todos from localStorage on app start
     if (status === 'idle') {
       dispatch(fetchTodos());
     }

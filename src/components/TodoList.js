@@ -14,7 +14,12 @@ function TodoList() {
       {todos.map((todo) => (
         <ListItem key={todo.id} secondaryAction={
           <>
-            <IconButton edge="end" aria-label="edit" onClick={() => dispatch(setEditingTodo(todo))}>
+            <IconButton 
+              edge="end" 
+              aria-label="edit" 
+              onClick={() => dispatch(setEditingTodo(todo))}
+              disabled={todo.completed}  // Disable edit button if todo is completed
+            >
               <EditIcon />
             </IconButton>
             <IconButton edge="end" aria-label="delete" onClick={() => dispatch(deleteTodo(todo.id))}>
