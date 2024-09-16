@@ -1,70 +1,37 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { deleteTodo, editTodo, toggleComplete } from '../features/todos/todoSlice';
-import { Button, TextField, Checkbox } from '@mui/material';
+import { List, ListItem, ListItemText, IconButton, Checkbox } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import { deleteTodo, toggleTodo, setEditingTodo } from '../redux/todoSlice';
 
-const TodoList = () => {
-  const todos = useSelector((state) => state.todos.todos);
+function TodoList() {
+  const todos = useSelector((state) => state.todos.items);
   const dispatch = useDispatch();
-  const [editableTodoId, setEditableTodoId] = useState(null);
-  const [newTitle, setNewTitle] = useState('');
-
-  const handleEdit = (id, title) => {
-    setEditableTodoId(id);
-    setNewTitle(title);
-  };
-
-  const handleSaveEdit = (id) => {
-    dispatch(editTodo({ id, title: newTitle }));
-    setEditableTodoId(null);
-  };
 
   return (
-    <div>
+    <List>
       {todos.map((todo) => (
-        <div key={todo.id} className="flex items-center space-x-4 p-2 border-b">
+        <ListItem key={todo.id} secondaryAction={
+          <>
+            <IconButton edge="end" aria-label="edit" onClick={() => dispatch(setEditingTodo(todo))}>
+              <EditIcon />
+            </IconButton>
+            <IconButton edge="end" aria-label="delete" onClick={() => dispatch(deleteTodo(todo.id))}>
+              <DeleteIcon />
+            </IconButton>
+          </>
+        }>
           <Checkbox
+            edge="start"
             checked={todo.completed}
-            onChange={() => dispatch(toggleComplete(todo.id))}
-            color="primary"
+            onChange={() => dispatch(toggleTodo(todo.id))}
           />
-          {editableTodoId === todo.id ? (
-            <TextField
-              variant="outlined"
-              value={newTitle}
-              onChange={(e) => setNewTitle(e.target.value)}
-            />
-          ) : (
-            <span className={`${todo.completed ? 'line-through' : ''}`}>{todo.title}</span>
-          )}
-          {editableTodoId === todo.id ? (
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => handleSaveEdit(todo.id)}
-            >
-              Save
-            </Button>
-          ) : (
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={() => handleEdit(todo.id, todo.title)}
-            >
-              Edit
-            </Button>
-          )}
-          <Button
-            variant="outlined"
-            color="error"
-            onClick={() => dispatch(deleteTodo(todo.id))}
-          >
-            Delete
-          </Button>
-        </div>
+          <ListItemText primary={todo.todo} style={{ textDecoration: todo.completed ? 'line-through' : 'none' }} />
+        </ListItem>
       ))}
-    </div>
+    </List>
   );
-};
+}
 
 export default TodoList;

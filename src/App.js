@@ -1,27 +1,31 @@
-import React from 'react';
-import AddTodo from './components/AddTodo';
+// src/App.js
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Container, Typography, Box } from '@mui/material';
 import TodoList from './components/TodoList';
-import Navbar from './components/Navbar';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import FetchData from './pages/FetchData';
+import TodoForm from './components/TodoForm';
+import { fetchTodos } from './redux/todoSlice';
 
 function App() {
+  const dispatch = useDispatch();
+  const status = useSelector((state) => state.todos.status);
+
+  useEffect(() => {
+    if (status === 'idle') {
+      dispatch(fetchTodos());
+    }
+  }, [status, dispatch]);
+
   return (
-    <Router>
-      <Navbar />
-      <div className="max-w-lg mx-auto p-6">
-        <Routes>
-          <Route path="/" element={
-            <>
-              <h1 className="text-3xl font-bold text-center mb-4">Todo List</h1>
-              <AddTodo />
-              <TodoList />
-            </>
-          } />
-          <Route path="/fetch-data" element={<FetchData />} />
-        </Routes>
-      </div>
-    </Router>
+    <Container maxWidth="sm">
+      <Box sx={{ my: 4 }}>
+        <Typography variant="h4" component="h1" gutterBottom>
+          Todo App
+        </Typography>
+        <TodoForm />
+        <TodoList />
+      </Box>
+    </Container>
   );
 }
 
